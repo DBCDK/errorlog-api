@@ -38,6 +38,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>dk.dbc</groupId>
+      <artifactId>json-binding</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>javax</groupId>
       <artifactId>javaee-api</artifactId>
     </dependency>
@@ -48,6 +53,18 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
     </dependency>
   </dependencies>
 </project>
