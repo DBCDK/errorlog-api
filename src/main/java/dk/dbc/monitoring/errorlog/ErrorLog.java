@@ -41,7 +41,7 @@ public class ErrorLog {
     /**
      * Retrieves errorlog entity with given ID from store
      * @param id ID of entity to retrieve
-     * @return Optional with entity or null
+     * @return Optional with entity
      */
     public Optional<ErrorLogEntity> get(int id) {
         return Optional.ofNullable(entityManager.find(ErrorLogEntity.class, id));
