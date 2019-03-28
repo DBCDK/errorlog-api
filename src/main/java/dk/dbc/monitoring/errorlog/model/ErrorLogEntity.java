@@ -5,6 +5,8 @@
 
 package dk.dbc.monitoring.errorlog.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -14,11 +16,13 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
 @Entity
 @Table(name = "errorlog")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorLogEntity {
     @Id
     @SequenceGenerator(
@@ -41,7 +45,7 @@ public class ErrorLogEntity {
     private String cause;
     private String stacktrace;
 
-    private OffsetDateTime tstamp;
+    private Date tstamp;
 
     @Convert(converter = ErrorLogEntityContextConverter.class)
     private Map<String, String> context;
@@ -136,12 +140,14 @@ public class ErrorLogEntity {
         return this;
     }
 
-    public OffsetDateTime getTstamp() {
+    public Date getTstamp() {
         return tstamp;
     }
 
     public ErrorLogEntity withTstamp(OffsetDateTime tstamp) {
-        this.tstamp = tstamp;
+        if (tstamp != null) {
+            this.tstamp = Date.from(tstamp.toInstant());
+        }
         return this;
     }
 
