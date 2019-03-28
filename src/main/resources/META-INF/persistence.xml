@@ -11,7 +11,7 @@
       <property name="javax.persistence.schema-generation.database.action" value="none"/>
     </properties>
   </persistence-unit>
-  <persistence-unit name="tickleRepoIT" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="errorlogIT" transaction-type="RESOURCE_LOCAL">
     <class>dk.dbc.monitoring.errorlog.model.ErrorLogEntityContextConverter</class>
     <class>dk.dbc.monitoring.errorlog.model.ErrorLogEntity</class>
     <properties>
