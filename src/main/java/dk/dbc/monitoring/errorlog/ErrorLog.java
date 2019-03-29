@@ -6,10 +6,15 @@
 package dk.dbc.monitoring.errorlog;
 
 import dk.dbc.monitoring.errorlog.model.ErrorLogEntity;
+import dk.dbc.monitoring.errorlog.model.ErrorLogSummary;
+import dk.dbc.monitoring.errorlog.model.QueryParam;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.sql.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -45,5 +50,35 @@ public class ErrorLog {
      */
     public Optional<ErrorLogEntity> get(int id) {
         return Optional.ofNullable(entityManager.find(ErrorLogEntity.class, id));
+    }
+
+    /**
+     * Produces a hierarchical rollup starting with the
+     * grand total of errorlog entries (ErrorLogSummary.Kind.TOTAL),
+     * after that comes namespace totals as primary group
+     * (ErrorLogSummary.Kind.NAMESPACE) followed by app totals
+     * (ErrorLogSummary.Kind.APP) and cause totals
+     * (ErrorLogSummary.Kind.CAUSE) in hierarchical order.
+     * @param queryParam summary query parameters, required are
+     *                   'team' and 'from' and 'until' timestamps.
+     * @return summary list
+     * @throws IllegalArgumentException on illegal or missing query parameter
+     */
+    public List<ErrorLogSummary> getSummary(QueryParam queryParam) throws IllegalArgumentException {
+        if (queryParam.getTeam() == null) {
+            throw new IllegalArgumentException("queryParam.team can not be null");
+        }
+        if (queryParam.getFrom() == null) {
+            throw new IllegalArgumentException("queryParam.from can not be null");
+        }
+        if (queryParam.getUntil() == null) {
+            throw new IllegalArgumentException("queryParam.until can not be null");
+        }
+        final TypedQuery<ErrorLogSummary> summaryQuery =
+                entityManager.createNamedQuery(ErrorLogEntity.QUERY_GET_SUMMARY, ErrorLogSummary.class)
+                .setParameter(1, queryParam.getTeam())
+                .setParameter(2, Date.from(queryParam.getFrom()))
+                .setParameter(3, Date.from(queryParam.getUntil()));
+        return summaryQuery.getResultList();
     }
 }

@@ -8,12 +8,18 @@ package dk.dbc.monitoring.errorlog.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import java.time.OffsetDateTime;
 import java.util.Date;
@@ -23,7 +29,44 @@ import java.util.Objects;
 @Entity
 @Table(name = "errorlog")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+ @SqlResultSetMappings({
+        @SqlResultSetMapping(
+                name = ErrorLogEntity.QUERY_GET_SUMMARY,
+                classes = {
+                        @ConstructorResult(
+                                targetClass = dk.dbc.monitoring.errorlog.model.ErrorLogSummary.class,
+                                columns = {
+                                        @ColumnResult(name = "namespace", type = String.class),
+                                        @ColumnResult(name = "app", type = String.class),
+                                        @ColumnResult(name = "cause", type = String.class),
+                                        @ColumnResult(name = "count"),
+                                        @ColumnResult(name = "grouping_namespace"),
+                                        @ColumnResult(name = "grouping_app"),
+                                        @ColumnResult(name = "grouping_cause")})})
+})
+@NamedNativeQueries({
+    @NamedNativeQuery(name = ErrorLogEntity.QUERY_GET_SUMMARY,
+            // Grouping operations are used in conjunction with grouping sets
+            // to distinguish result rows. The arguments to the GROUPING operation
+            // are not actually evaluated, but they must match exactly expressions
+            // given in the GROUP BY clause of the associated query level. Bits
+            // are assigned with the rightmost argument being the least-significant
+            // bit; each bit is 0 if the corresponding expression is included in
+            // the grouping criteria of the grouping set generating the result row,
+            // and 1 if it is not.
+            query = "SELECT namespace, app, cause, count(*), " +
+                    "GROUPING(namespace) grouping_namespace, " +
+                    "GROUPING(app) grouping_app, " +
+                    "GROUPING(cause) grouping_cause " +
+                    "FROM errorlog " +
+                    "WHERE team = ? AND tstamp >= ? AND tstamp <= ? " +
+                    "GROUP BY ROLLUP(namespace, app, cause) " +
+                    "ORDER BY namespace DESC, app DESC, cause DESC;",
+            resultSetMapping = ErrorLogEntity.QUERY_GET_SUMMARY),
+})
 public class ErrorLogEntity {
+    public static final String QUERY_GET_SUMMARY = "ErrorLogEntity.getSummary";
+
     @Id
     @SequenceGenerator(
             name = "errorlog_id_seq",
