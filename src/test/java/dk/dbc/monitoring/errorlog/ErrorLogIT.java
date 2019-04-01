@@ -5,6 +5,7 @@
 
 package dk.dbc.monitoring.errorlog;
 
+import dk.dbc.monitoring.errorlog.model.ErrorLogAppView;
 import dk.dbc.monitoring.errorlog.model.ErrorLogEntity;
 import dk.dbc.monitoring.errorlog.model.ErrorLogSummary;
 import dk.dbc.monitoring.errorlog.model.QueryParam;
@@ -162,5 +163,85 @@ public class ErrorLogIT extends IntegrationTest {
         assertThat("number of summary elements", summary.size(), is(1));
         assertThat("(0) kind", summary.get(0).getKind(), is(ErrorLogSummary.Kind.TOTAL));
         assertThat("(0) count", summary.get(0).getCount(), is(0L));
+    }
+
+    @Test
+    public void getAppView() {
+        final ErrorLogAppView appView = errorLog.getAppView(new QueryParam()
+                .withNamespace("prod_A")
+                .withApp("app_1")
+                .withTeam("teamX")
+                .withFrom(Instant.now().minus(1, ChronoUnit.DAYS))
+                .withUntil(Instant.now().plus(1, ChronoUnit.DAYS))
+                .withLimit(2));
+
+        assertThat("size of app view", appView.getSize(), is(4L));
+        assertThat("limit", appView.getEntities().size(), is(2));
+        assertThat("offset", appView.getFirstPosition(), is(0L));
+        assertThat("1st entity ID", appView.getEntities().get(0).getId(), is(1));
+        assertThat("2nd entity ID", appView.getEntities().get(1).getId(), is(5));
+    }
+
+    @Test
+    public void getAppViewPagination() {
+        final ErrorLogAppView appView = errorLog.getAppView(new QueryParam()
+                .withNamespace("prod_A")
+                .withApp("app_1")
+                .withTeam("teamX")
+                .withFrom(Instant.now().minus(1, ChronoUnit.DAYS))
+                .withUntil(Instant.now().plus(1, ChronoUnit.DAYS))
+                .withOffset(2)
+                .withLimit(2));
+
+        assertThat("size of app view", appView.getSize(), is(4L));
+        assertThat("limit", appView.getEntities().size(), is(2));
+        assertThat("offset", appView.getFirstPosition(), is(2L));
+        assertThat("1st entity ID", appView.getEntities().get(0).getId(), is(6));
+        assertThat("2nd entity ID", appView.getEntities().get(1).getId(), is(7));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getAppViewMissingNamespaceQueryParam() {
+        errorLog.getAppView(new QueryParam()
+                .withApp("app_1")
+                .withTeam("teamX")
+                .withFrom(Instant.now().minus(1, ChronoUnit.DAYS))
+                .withUntil(Instant.now().plus(1, ChronoUnit.DAYS)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getAppViewMissingAppQueryParam() {
+        errorLog.getAppView(new QueryParam()
+                .withNamespace("prod_A")
+                .withTeam("teamX")
+                .withFrom(Instant.now().minus(1, ChronoUnit.DAYS))
+                .withUntil(Instant.now().plus(1, ChronoUnit.DAYS)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getAppViewMissingTeamQueryParam() {
+        errorLog.getAppView(new QueryParam()
+                .withNamespace("prod_A")
+                .withApp("app_1")
+                .withFrom(Instant.now().minus(1, ChronoUnit.DAYS))
+                .withUntil(Instant.now().plus(1, ChronoUnit.DAYS)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getAppViewMissingFromQueryParam() {
+        errorLog.getAppView(new QueryParam()
+                .withNamespace("prod_A")
+                .withApp("app_1")
+                .withTeam("teamX")
+                .withUntil(Instant.now().plus(1, ChronoUnit.DAYS)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getAppViewMissingUntilQueryParam() {
+        errorLog.getAppView(new QueryParam()
+                .withNamespace("prod_A")
+                .withApp("app_1")
+                .withTeam("teamX")
+                .withFrom(Instant.now().minus(1, ChronoUnit.DAYS)));
     }
 }

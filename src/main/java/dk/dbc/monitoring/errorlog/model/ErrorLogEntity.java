@@ -17,6 +17,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
@@ -64,8 +66,22 @@ import java.util.Objects;
                     "ORDER BY namespace DESC, app DESC, cause DESC;",
             resultSetMapping = ErrorLogEntity.QUERY_GET_SUMMARY),
 })
+@NamedQueries({
+    @NamedQuery(name = ErrorLogEntity.QUERY_GET_APP_VIEW,
+            query = "SELECT e " +
+                    "FROM ErrorLogEntity e " +
+                    "WHERE e.namespace = :namespace AND e.app = :app " +
+                    "AND e.team = :team AND e.tstamp >= :from AND e.tstamp <= :until " +
+                    "ORDER BY e.tstamp ASC"),
+    @NamedQuery(name = ErrorLogEntity.QUERY_GET_APP_VIEW_SIZE,
+            query = "SELECT COUNT(e) FROM ErrorLogEntity e " +
+                    "WHERE e.namespace = :namespace AND e.app = :app " +
+                    "AND e.team = :team AND e.tstamp >= :from AND e.tstamp <= :until"),
+})
 public class ErrorLogEntity {
     public static final String QUERY_GET_SUMMARY = "ErrorLogEntity.getSummary";
+    public static final String QUERY_GET_APP_VIEW = "ErrorLogEntity.getAppView";
+    public static final String QUERY_GET_APP_VIEW_SIZE = "ErrorLogEntity.getAppViewSize";
 
     @Id
     @SequenceGenerator(
