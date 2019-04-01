@@ -36,6 +36,14 @@
     </repository>
   </repositories>
 
+  <distributionManagement>
+    <repository>
+      <id>mavenrepo.dbc.dk</id>
+      <name>mavenrepo</name>
+      <url>http://mavenrepo.dbc.dk/content/repositories/snapshots/</url>
+    </repository>
+  </distributionManagement>
+
   <dependencies>
     <dependency>
       <groupId>dk.dbc</groupId>
