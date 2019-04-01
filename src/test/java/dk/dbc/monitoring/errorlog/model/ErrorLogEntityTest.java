@@ -26,9 +26,9 @@ public class ErrorLogEntityTest {
         final Date expectedTimestamp = Date.from(offsetDateTime.toInstant());
         final ErrorLogEntity entity = new ErrorLogEntity()
                 .withApp("testApp")
-                .withTstamp(offsetDateTime);
+                .withTimeLogged(offsetDateTime);
         assertThat(jsonbContext.marshall(entity),
-                is(String.format("{\"app\":\"testApp\",\"tstamp\":%d}", expectedTimestamp.getTime())));
+                is(String.format("{\"app\":\"testApp\",\"timeLogged\":%d}", expectedTimestamp.getTime())));
     }
 
 }

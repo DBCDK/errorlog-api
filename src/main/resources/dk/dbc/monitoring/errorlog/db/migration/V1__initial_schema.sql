@@ -10,7 +10,7 @@ CREATE TABLE errorlog (
   host        TEXT NOT NULL,
   container   TEXT NOT NULL,
   message     TEXT NOT NULL,
-  tstamp      TIMESTAMP WITH TIME ZONE NOT NULL,
+  timeLogged  TIMESTAMP WITH TIME ZONE NOT NULL,
   team        TEXT,
   logger      TEXT,
   cause       TEXT,
@@ -19,5 +19,5 @@ CREATE TABLE errorlog (
 );
 CREATE INDEX errorlog_app_index ON errorlog(app);
 CREATE INDEX errorlog_namespace_index ON errorlog(namespace);
-CREATE INDEX errorlog_tstamp_index ON errorlog(tstamp);
+CREATE INDEX errorlog_timeLogged_index ON errorlog(timeLogged);
 CREATE INDEX errorlog_team_index ON errorlog(team);

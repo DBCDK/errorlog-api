@@ -61,7 +61,7 @@ import java.util.Objects;
                     "GROUPING(app) grouping_app, " +
                     "GROUPING(cause) grouping_cause " +
                     "FROM errorlog " +
-                    "WHERE team = ? AND tstamp >= ? AND tstamp <= ? " +
+                    "WHERE team = ? AND timeLogged >= ? AND timeLogged <= ? " +
                     "GROUP BY ROLLUP(namespace, app, cause) " +
                     "ORDER BY namespace DESC, app DESC, cause DESC;",
             resultSetMapping = ErrorLogEntity.QUERY_GET_SUMMARY),
@@ -71,12 +71,12 @@ import java.util.Objects;
             query = "SELECT e " +
                     "FROM ErrorLogEntity e " +
                     "WHERE e.namespace = :namespace AND e.app = :app " +
-                    "AND e.team = :team AND e.tstamp >= :from AND e.tstamp <= :until " +
-                    "ORDER BY e.tstamp ASC"),
+                    "AND e.team = :team AND e.timeLogged >= :from AND e.timeLogged <= :until " +
+                    "ORDER BY e.timeLogged ASC"),
     @NamedQuery(name = ErrorLogEntity.QUERY_GET_APP_VIEW_SIZE,
             query = "SELECT COUNT(e) FROM ErrorLogEntity e " +
                     "WHERE e.namespace = :namespace AND e.app = :app " +
-                    "AND e.team = :team AND e.tstamp >= :from AND e.tstamp <= :until"),
+                    "AND e.team = :team AND e.timeLogged >= :from AND e.timeLogged <= :until"),
 })
 public class ErrorLogEntity {
     public static final String QUERY_GET_SUMMARY = "ErrorLogEntity.getSummary";
@@ -104,7 +104,7 @@ public class ErrorLogEntity {
     private String cause;
     private String stacktrace;
 
-    private Date tstamp;
+    private Date timeLogged;
 
     @Convert(converter = ErrorLogEntityContextConverter.class)
     private Map<String, String> context;
@@ -199,13 +199,13 @@ public class ErrorLogEntity {
         return this;
     }
 
-    public Date getTstamp() {
-        return tstamp;
+    public Date getTimeLogged() {
+        return timeLogged;
     }
 
-    public ErrorLogEntity withTstamp(OffsetDateTime tstamp) {
-        if (tstamp != null) {
-            this.tstamp = Date.from(tstamp.toInstant());
+    public ErrorLogEntity withTimeLogged(OffsetDateTime timeLogged) {
+        if (timeLogged != null) {
+            this.timeLogged = Date.from(timeLogged.toInstant());
         }
         return this;
     }
@@ -260,7 +260,7 @@ public class ErrorLogEntity {
         if (!Objects.equals(stacktrace, that.stacktrace)) {
             return false;
         }
-        if (!Objects.equals(tstamp, that.tstamp)) {
+        if (!Objects.equals(timeLogged, that.timeLogged)) {
             return false;
         }
         return Objects.equals(context, that.context);
@@ -278,7 +278,7 @@ public class ErrorLogEntity {
         result = 31 * result + (logger != null ? logger.hashCode() : 0);
         result = 31 * result + (cause != null ? cause.hashCode() : 0);
         result = 31 * result + (stacktrace != null ? stacktrace.hashCode() : 0);
-        result = 31 * result + (tstamp != null ? tstamp.hashCode() : 0);
+        result = 31 * result + (timeLogged != null ? timeLogged.hashCode() : 0);
         result = 31 * result + (context != null ? context.hashCode() : 0);
         return result;
     }

@@ -40,7 +40,7 @@ public class ErrorLogIT extends IntegrationTest {
                 .withHost("testHost")
                 .withContainer("testContainer")
                 .withMessage("testMessage")
-                .withTstamp(OffsetDateTime.ofInstant(
+                .withTimeLogged(OffsetDateTime.ofInstant(
                         Instant.now(), ZoneId.systemDefault()));
         transaction.run(() -> {
             errorLog.persist(entity);
