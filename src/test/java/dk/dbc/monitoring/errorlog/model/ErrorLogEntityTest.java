@@ -12,6 +12,8 @@ import org.junit.Test;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -28,7 +30,13 @@ public class ErrorLogEntityTest {
                 .withApp("testApp")
                 .withTimeLogged(offsetDateTime);
         assertThat(jsonbContext.marshall(entity),
-                is(String.format("{\"app\":\"testApp\",\"timeLogged\":%d}", expectedTimestamp.getTime())));
+                is(String.format("{\"app\":\"testApp\",\"timeLogged\":%d,\"timeLoggedZonedDisplay\":\"%s\"}",
+                        expectedTimestamp.getTime(), getExpectedTimeLoggedZonedDisplay(expectedTimestamp))));
     }
 
+    private String getExpectedTimeLoggedZonedDisplay(Date timeLogged) {
+        final OffsetDateTime offsetDateTime = timeLogged.toInstant().atOffset(ZoneOffset.UTC);
+        final ZonedDateTime zonedDateTime = offsetDateTime.atZoneSameInstant(ZoneId.systemDefault());
+        return zonedDateTime.toString();
+    }
 }
