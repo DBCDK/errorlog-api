@@ -24,6 +24,9 @@ import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -208,6 +211,15 @@ public class ErrorLogEntity {
             this.timeLogged = Date.from(timeLogged.toInstant());
         }
         return this;
+    }
+
+    public String getTimeLoggedZonedDisplay() {
+        if (timeLogged != null) {
+            final OffsetDateTime offsetDateTime = timeLogged.toInstant().atOffset(ZoneOffset.UTC);
+            final ZonedDateTime zonedDateTime = offsetDateTime.atZoneSameInstant(ZoneId.systemDefault());
+            return zonedDateTime.toString();
+        }
+        return null;
     }
 
     public Map<String, String> getContext() {
