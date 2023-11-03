@@ -5,12 +5,12 @@
 
 package dk.dbc.monitoring.errorlog.model;
 
-import dk.dbc.jsonb.JSONBContext;
-import dk.dbc.jsonb.JSONBException;
+import dk.dbc.commons.jsonb.JSONBContext;
+import dk.dbc.commons.jsonb.JSONBException;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import org.postgresql.util.PGobject;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
