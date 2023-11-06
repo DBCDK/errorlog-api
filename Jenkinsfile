@@ -12,6 +12,7 @@ pipeline {
 	}
 	tools {
         maven "Maven 3"
+		jdk 'jdk11'
     }
 	stages {
 		stage("clear workspace") {
@@ -22,7 +23,7 @@ pipeline {
 		}
 		stage("build") {
 			steps {
-				sh "mvn verify pmd:pmd javadoc:aggregate"
+				sh "mvn -B verify pmd:pmd javadoc:aggregate"
 				junit "target/surefire-reports/TEST-*.xml"
 			}
 		}

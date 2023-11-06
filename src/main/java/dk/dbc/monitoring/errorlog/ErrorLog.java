@@ -9,11 +9,11 @@ import dk.dbc.monitoring.errorlog.model.ErrorLogAppView;
 import dk.dbc.monitoring.errorlog.model.ErrorLogEntity;
 import dk.dbc.monitoring.errorlog.model.ErrorLogSummary;
 import dk.dbc.monitoring.errorlog.model.QueryParam;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
